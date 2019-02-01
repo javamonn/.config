@@ -1,5 +1,6 @@
 " FIXME: This is not cross platform. Think about moving to a variables.vim that is outside of VCS?
 let path_reason_language_server = '/usr/bin/reason-language-server.exe'
+let path_fzf = '/home/daniel/.fzf'
 
 " Plugins
 call plug#begin('~/.config/nvim/plug')
@@ -9,7 +10,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'mxw/vim-jsx'
-Plug '/usr/local/opt/fzf'
+Plug '/home/daniel/.fzf'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
@@ -19,6 +20,7 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ }
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'reasonml-editor/vim-reason-plus'
+Plug 'tpope/vim-vinegar'
 
 call plug#end()
 
@@ -47,7 +49,8 @@ autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.gra
 " - https://github.com/jaredly/reason-language-server 
 " - https://github.com/sourcegraph/javascript-typescript-langserver
 
-set hidden              " required for operations modifying several buffers e.g. rename
+set hidden                                           " required for operations modifying several buffers e.g. rename
+let g:LanguageClient_diagnosticsList = 'Location'    " use location list for diagnostic information, don't clobber quickfix
 let g:LanguageClient_serverCommands = {
   \ 'reason': [path_reason_language_server],
   \ 'javascript.jsx': ['javascript-typescript-stdio'],
@@ -62,5 +65,5 @@ let g:deoplete#enable_at_startup = 1
 
 " Colorscheme
 syntax enable
-set background=dark
+set background=light
 colorscheme solarized
