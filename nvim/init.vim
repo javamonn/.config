@@ -1,11 +1,12 @@
 " FIXME: This is not cross platform. Think about moving to a variables.vim that is outside of VCS?
+let uname = substitute(system('uname'), '\n', '', '')
+let is_macos = uname == 'Darwin'
 let path_reason_language_server = '/usr/bin/reason-language-server.exe'
-let path_fzf = '/home/daniel/.fzf'
 
 " Plugins
 call plug#begin('~/.config/nvim/plug')
 
-Plug 'altercation/vim-colors-solarized'
+Plug 'morhetz/gruvbox'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'HerringtonDarkholme/yats.vim'
@@ -13,7 +14,7 @@ Plug 'mxw/vim-jsx'
 Plug '/home/daniel/.fzf'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
+  \ 'for': ['javascript', 'typescript', 'typescript.tsx', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
@@ -21,6 +22,8 @@ Plug 'autozimu/LanguageClient-neovim', {
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'reasonml-editor/vim-reason-plus'
 Plug 'tpope/vim-vinegar'
+Plug 'jparise/vim-graphql'
+Plug 'itchyny/lightline.vim'
 
 call plug#end()
 
@@ -43,6 +46,9 @@ nnoremap <C-H> <C-W><C-H>       " easier left split navigation
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
 
+" Fzf
+let $FZF_DEFAULT_COMMAND = 'ag -l -g ""'
+
 " LanguageClient-neovim
 "
 " Assumes language servers have been installed:
@@ -51,11 +57,20 @@ autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.gra
 
 set hidden                                           " required for operations modifying several buffers e.g. rename
 let g:LanguageClient_diagnosticsList = 'Location'    " use location list for diagnostic information, don't clobber quickfix
+let g:LanguageClient_rootMarkers = {
+  \ 'reason': ['package.json'],
+  \ 'javascript.jsx': ['package.json'],
+  \ 'typescript': ['package.json'],
+  \ 'typescript.tsx': ['package.json'],
+  \ }
 let g:LanguageClient_serverCommands = {
   \ 'reason': [path_reason_language_server],
-  \ 'javascript.jsx': ['javascript-typescript-stdio'],
-  \ 'typescript': ['javascript-typescript-stdio']
+  \ 'javascript.jsx': ['typescript-language-server', '--stdio'],
+  \ 'typescript': ['typescript-language-server', '--stdio'],
+  \ 'typescript.tsx': ['typescript-language-server', '--stdio'],
   \ }
+
+
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<cr>
 nnoremap <silent> gf :call LanguageClient_textDocument_formatting()<cr>
 nnoremap <silent> <cr> :call LanguageClient_textDocument_hover()<cr>
@@ -63,7 +78,15 @@ nnoremap <silent> <cr> :call LanguageClient_textDocument_hover()<cr>
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 
+" Lightline
+if !has('gui_running')
+  set t_Co=256
+endif
+let g:lightline = {
+  \ 'colorscheme': 'gruvbox',
+  \ }
+
 " Colorscheme
+set termguicolors
 syntax enable
-set background=light
-colorscheme solarized
+colorscheme gruvbox
