@@ -1,0 +1,13 @@
+{
+  "suggest.floatEnable": true,
+  "coc.preferences.hoverTarget": "float",
+  "diagnostic.messageTarget": "float",
+  "signature.target": "float",
+  "languageserver": {
+    "reasonml": {
+      "command": "reason-language-server", 
+      "filetypes": ["reason"],
+      "rootPatterns": ["package.json"]
+    }
+  }
+}
